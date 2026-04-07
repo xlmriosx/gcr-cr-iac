@@ -35,6 +35,7 @@ deploy_module() {
 deploy_module "02-artifact-registry"
 deploy_module "03-service-account"
 # deploy_module "04-cloud-run"
+deploy_module "05-cloud-run-notely"
 
 echo ""
 echo "========================================"
