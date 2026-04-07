@@ -15,6 +15,9 @@ resource "google_cloud_run_v2_service" "notely_service" {
   ingress = "INGRESS_TRAFFIC_ALL"
 
   template {
+    # Usar tu service account dedicado de despliegues
+    service_account = "cloud-run-deployer@${var.project_id}.iam.gserviceaccount.com"
+    
     scaling {
       # Set maximum number of instances to 4 (Auto scaling is implicit)
       max_instance_count = 4
@@ -23,6 +26,17 @@ resource "google_cloud_run_v2_service" "notely_service" {
     containers {
       # Pulls the image from the private Artifact Registry we created in 02
       image = "${var.region}-docker.pkg.dev/${var.project_id}/notely-ar-repo/notely:latest"
+
+      # Cargar la Password de base de datos desde Secret Manager (creada en el Modulo 06)
+      env {
+        name = "DATABASE_URL"
+        value_source {
+          secret_key_ref {
+            secret  = "notely_db_password"
+            version = "latest"
+          }
+        }
+      }
     }
   }
 
